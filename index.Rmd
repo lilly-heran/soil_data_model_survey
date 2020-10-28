@@ -1,0 +1,70 @@
+--- 
+title: 'Soil Data Models: a review'
+author:
+- name: K Todd-Brown (ktoddbrown@ufl.edu)
+- name: L Heran, K Frederick, M Younger
+- name: L Nave, N van Gestel, C Scheadel, C Sierra, C Lawrence, A Hoyt, S Stoner,
+    J Beem-Miller, K Heckman, S von Fromm, Á Kuhnen, J Holmquist, W Wieder, S Earl,
+    T Crowther, N Batjes, E Ribeiro
+date: "`r format(Sys.Date(), '%Y %B %d')`"
+output: 
+  bookdown::gitbook
+description: 'This is the compiled report out of the ESIP Labs (2020) project: Survey
+  of data models used in soil meta analysis'
+documentclass: book
+link-citations: yes
+nocite: |
+  @Crowther2016, @vanGestel2018, @Lawrence2020
+bibliography:
+- references.bib
+- packages.bib
+site: bookdown::bookdown_site
+biblio-style: apalike
+---
+
+# Introduction
+
+The overall goal of the project is to develop, implement, and test best practices for compiling transparent, reproducible, harmonized, and extendable data collections for meta-analysis. 
+In this document there is 
+1) an examination of current meta-analysis efforts in the soil community though short reviews developed in collaboration with the research group, 
+2) a general interview to the soils community, and 
+3) a structural summary of the data models available.
+
+The results from this project have spawned an upcoming manuscript and future ESIP Cluster [links pending].
+
+This work is based on materials provided by the ESIP Lab with support from the National Aeronautics and Space Administration (NASA), National Oceanic and Atmospheric Administration (NOAA) and the United States Geologic Survey (USGS).
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo=FALSE,
+                      message=FALSE,
+                      warning=FALSE,
+                      eval=TRUE)
+```
+
+
+
+```{r}
+#devtools::install_github("bergant/datamodelr")
+library(datamodelr)
+library(DT)
+library(plyr)
+library(tidyverse)
+library(bookdown)
+library(distill)
+
+data.dir <- 'data'
+
+dataDescription.ls <- list(structure = read_csv(file.path(data.dir, 'data_structure.csv'), col_types = strrep('c', 4) ),
+                           meta = read_csv(file.path(data.dir, 'data_meta.csv'), col_types = strrep('c', 5)),
+                           thesaurus = read_csv(file.path(data.dir, 'thesaurus.csv'), col_types = strrep('c', 6)),
+                           control_vocabulary = read_csv(file.path(data.dir, 'control_vocabulary.csv'), col_types = strrep('c', 4)))
+
+```
+
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```

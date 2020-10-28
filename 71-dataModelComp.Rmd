@@ -1,0 +1,200 @@
+
+# June Comparision of data model structures
+
+```{r}
+dataModelDescription <- dataDescription.ls$structure %>%
+  filter(data_product %in% c("ISCN3", "CCRCN", "Crowther", "vanGestel", "ISRaD" )) %>%
+  select(data_product, data_table, data_column, data_type)  %>%
+  mutate(long_table_name = sprintf('%s:%s', data_product, data_table))
+
+```
+
+```{r}
+dataModels_segments <- dlply(dataModelDescription, c('data_product'),
+                             function(xx){as.list(unique(xx$long_table_name))})
+
+all_models <- dataModelDescription %>%
+  filter(data_product %in% c('ISRaD', 'ISCN3', 'CCRCN', 'Crowther', 'vanGestel')) %>%
+  #mutate(Type = if_else(data_product == 'ISRaD' & grepl('_name$', data_type), 'id', 
+  #                      Type)) %>%
+  mutate(ref = case_when(data_product == 'ISRaD' & grepl('^entry_name$', data_column) ~ 'ISRaD:metadata',
+                         data_product == 'ISRaD' & grepl('^site_name$', data_column) ~ 'ISRaD:site',
+                         data_product == 'ISRaD' & grepl('^pro_name$', data_column) ~ 'ISRaD:profile',
+                         data_product == 'ISRaD' & grepl('^flx_name$', data_column) ~ 'ISRaD:flux',
+                         data_product == 'ISRaD' & grepl('^lyr_name$', data_column) ~ 'ISRaD:layer',
+                         data_product == 'ISRaD' & grepl('^ist_name$', data_column) ~ 'ISRaD:interstitial',
+                         data_product == 'ISRaD' & grepl('^frc_name$', data_column) ~ 'ISRaD:fraction',
+                         data_product == 'ISRaD' & grepl('^inc_name$', data_column) ~ 'ISRaD:incubation',
+                         #ISCN3
+                         #data_product == 'ISCN3' & grepl('^site_name$', data_column) ~ 'ISCN3:site',
+                         data_product == 'ISCN3' & grepl('^profile_name$', data_column) ~ 'ISCN3:profile',
+                         data_product == 'ISCN3' & grepl('^layer_name$', data_column) ~ 'ISCN3:layer',
+                         #data_product == 'ISCN3' & grepl('^fraction_name$', data_column) ~ 'ISCN3:fraction',
+                         #CCRCN
+                         data_product == 'CCRCN' & grepl('^study_id$', data_column) ~ 'CCRCN:Study Information',
+                         data_product == 'CCRCN' & grepl('^site_id$', data_column) ~ 'CCRCN:Site Level',
+                         data_product == 'CCRCN' & grepl('^core_id$', data_column) ~ 'CCRCN:Core Level',
+                         #Crowther
+                         data_product == 'Crowther' & grepl('^Study$', data_column) ~ 'Crowther:Summary',
+                         data_product == 'Crowther' & grepl('Row Labels', data_column) ~ 'Crowther:Summary',
+                         #VanGestel
+                         data_product == 'vanGestel' & grepl('site.id', data_column) ~ 'vanGestel:sites',
+                         TRUE ~ as.character(NA))) %>%
+  mutate( key = !is.na(ref) & data_type == 'id') %>%
+  mutate(ref_col = case_when(data_type == 'id' & (!is.na(ref)) ~ data_column,
+                             TRUE ~ as.character(NA))) %>%
+  rename('column' = 'data_column' , 'table' = 'long_table_name' ) %>%
+  select(table, column, key, ref, ref_col) %>%
+  mutate(ref = if_else(table == ref, as.character(NA), ref),
+         ref_col = if_else(is.na(ref), ref, ref_col))
+
+
+# temp_dm <- as.data_model(all_models %>% filter(key))
+# temp_dm2 <- dm_set_segment(temp_dm, dataModels_segments)
+# graph <- dm_create_graph(temp_dm2, rankdir = "RL", col_attr = c('column'))
+# dm_render_graph(graph)
+```
+
+## Introduction and goals
+
+We considered five data products in this section, selected for their relevance to research driven soil carbon data products: International Soil Carbon Network vs 3 (ISCN), Coastal Carbon Research Coordination Network (CCRCN), International Soil Radiocarbon Database (ISRaD), and two soil warming meta-analyses conducted by Crowther (@Crowther2016) and vanGestel (@vanGestel2018). These studies include ongoing studies (CCRCN, ISCN), ongoing with incremental publications (ISRaD:@Lawrence2020), and completed projects (Crowther:@Crowther2016, vanGestel:@vanGestel2018).
+
+## Individual PI studies were smaller.
+
+In general individual PI projects had smaller data models (see Table 1 and Figure 1).
+Multi-PI studies tended to have multiple columns describing the same variable. These extra columns describe methods, units, standard deviations, and other quantities related to said variable. While Crowther technically had 8 data tables, most of the data was in three main data tables  (Figure 2).
+In contrast, multi-PI projects had larger data tables with more complex key-ed references across them (Figure 3).
+This also held true for the number of variables in each study. The single PI studies had between 40 (Crowther: Figure 1) and 56 (vanGestel) unique variable names. Multi-PI studies however had between 144 (CCRCN) and 351 (ISRaD: Figure 2).
+
+```{r}
+dataDescription.ls$thesaurus %>%
+  filter(data_product %in% c("ISCN3", "CCRCN", "Crowther", "vanGestel", "ISRaD" )) %>%
+  select(data_product, data_table, provided_variable, variable) %>%
+  unique() %>%
+  group_by(data_product) %>% summarize(`Table count` = length(unique(data_table)),
+                                     `Variable count` =  length(unique(variable)),
+                                     `Column count` = length(unique(provided_variable))) %>%
+  rename('Study ID' = data_product) %>%
+  arrange(`Column count`) %>%
+  mutate('Multi PI?' = case_when(`Study ID` %in% c("ISCN3", "ISRaD", "CCRCN") ~ 'Yes',
+                                 TRUE ~ 'No')) %>%
+  knitr::kable(caption = 'Table 1:  Increasing the number of researchers involved with a study increased the complexity of the data model. The studies varied in the number of data tables that they each contained, with the single PI study by Crowther only containing 3 tables and the multi-PI study CCRCN containing 12. There was a wider variation in the unique variables in each study, from 28 to 221. These were associated with columns that contained data values, units, and other methods notes.')
+```
+
+```{r fig.cap='Figure 1: Data models with id keys only.'}
+all_dm <- as.data_model(all_models)
+all_dm2 <- dm_set_segment(all_dm, dataModels_segments)
+
+graph <- dm_create_graph(all_dm2, rankdir = "RL", col_attr = c('column'), view_type = 'keys_only')
+dm_render_graph(graph)
+```
+
+```{r fig.cap='Figure 2: Crawther data model. An example of a less complex, single PI data model.'}
+temp_dm <- as.data_model(all_models %>% filter(grepl('Crowther', table)))
+temp_dm2 <- dm_set_segment(temp_dm, dataModels_segments)
+graph <- dm_create_graph(temp_dm2, rankdir = "RL", col_attr = c('column'))
+dm_render_graph(graph)
+```
+
+```{r fig.width=8, fig.height=24, fig.cap='Figure 3: ISRaD data model. An example of a complex, multiPI data model.'}
+temp_dm <- as.data_model(all_models %>% filter(grepl('ISRaD', table)))
+temp_dm2 <- dm_set_segment(temp_dm, dataModels_segments)
+graph <- dm_create_graph(temp_dm2, rankdir = "TB", col_attr = c('column'))
+dm_render_graph(graph)
+```
+
+
+
+## Vocabulary across studies were not obviously harmonizable.
+
+Initial efforts to harmonize the vocabulary across studies showed over 580 unique variables out of 924 total variables across all data models. 
+Only 5 variables were commonly shared across all data models. 
+These variables tended to focus on study information, site location, climate, bulk density, organic carbon percentage, sand/silt/clay fractions, pH and cation exchange capasity (see Table 2).
+
+
+```{r}
+dataDescription.ls$thesaurus %>% select(data_product, variable) %>%
+  unique() %>% group_by(variable) %>%
+  tally(name = 'study_count') %>%
+  filter(study_count > 2) %>%
+  arrange(-study_count) %>% select(-study_count) %>%
+  knitr::kable(caption = 'Table 2: Common variables (>2 data models) across data models. Total variable count is 21.')
+```
+
+## Study feature summary
+
+Common across most models are location (latitude-longitude-elevation), observation time, mean annual temperature, and mean annual precipitation, all of which describe site level characteristics. 
+Depth of core or layer paired with bulk density, organic carbon percentage, sand, silt, clay, pH, soil texture class, cation_exchange_capacity, and 14C describe soil level characteristics.
+Columns for vegetation class notes were common, but not directly comparable across the studies.
+Bulk density was typically broken into several categories depending on the measurement method used.
+
+### Unique features
+    
+  - CCRCN
+    + min/max latitude
+    + detailed author information
+    + 'one_liner' summary
+    + break out bulk density mass/volume
+    + many specific isotopes listed (Am241, C14, Cs137, Be7, Pb210, Ra226)
+    + X_class is free text or control vocabulary
+    + coastal specific vocabulary
+      * inundation/salinity
+    + anthropgenic impacts
+    + core-level vs site latitude/longitude and elevation
+  - ISCN3
+    + disturbance table
+    + high level of site details
+      - frost free days, ponding, runoff
+    + higher then average number of layer-level info
+    + fraction table only shared with ISRaD
+  - ISRaD
+    + interstitial table
+    + flux table
+    + incubation table
+    + fraction table only shared with ISCN3
+    + higher than average number of layer info
+      - mineral abundance, mass of element extracted
+ - Crowther
+    + Author updated data (outside sources)
+      - Biome, % Clay, pH, 
+    + Detailed soil warming data
+      - planned temperatures, control temperatures, mean temperatures
+    + Cation exchange capasity reported
+    + % Nitrogen reported
+    + distinguished between total raw carbon and total carbon
+    + Difference between detailed_site_id(New Name) and site_id(Old Name)
+  - vanGestel
+    + mean depth instead of depth of core and layer
+    + carbon, nitrogen, and phosphorus pools above and below ground
+    + treatments and information about treatments (mean, standard error, size)
+    + 'input' variable
+    + soil horizon and percent soil organic matter
+
+## Inital ontology search for relevant control vocabulary. 
+
+In general, The Ecosystem Ontology (http://bioportal.bioontology.org/ontologies/ECSO) was the most relevant ontology to this study. However, the control vocabulary was not as method specific as many of the larger data products examined here. We searched http://bioportal.bioontology.org/ for ontologies with four common terms across the studies: ‘soil bulk density’, ‘soil organic carbon’, ‘soil pH’, and ‘soil depth’. None of the data products considered in this study refered to a formalized ontology and instead chose to develop their own or adapt-extend vocabulary from previous data products. We report an inital set of search results for some common terms in the data products considered.
+
+The search term *'soil bulk density’* returned 39 ontology matches (search date: 19 May 2020). Many of these were entries for generalized ‘density’ or ‘bulk density’. The Ecosystem Ontology was the only ontology with a complete match (http://purl.dataone.org/odo/ECSO_00001110), though the definition of this entry was ambiguous. It did not specify if the bulk density was sieved or dry soil, making this challenging to use in a soil study without further specifications.
+
+The search term *‘soil organic carbon’* returned 26 ontology matches (search date: 19 May 2020). While many of these referred to soil or carbon independently of soil, two entries were specific to soil organic carbon. Interlinking Ontology for Biological Concepts had a complete match to ‘soil organic carbon’ (http://purl.jp/bio/4/id/200906061124670034), though no units were specified making it ambiguous whether this was a mass fraction or density quantification. The Ecosystem Ontology also had a complete match under ‘organic carbon percentage in soil’ (http://purl.dataone.org/odo/ECSO_00000648), but also had ‘total organic carbon percentage’ (http://purl.dataone.org/odo/ECSO_00002149). While the units in this case were well defined, the method of measurement, similar to bulk density, needed more specificity to make the label broadly applicable.
+
+The search term *‘soil pH’* returned 43 ontology matches (search data: 19 May 2020). These hits were dominated by either ‘soil’ or ‘pH’ hits. Only two ontologies had specific soil pH entries. The Ecosystem Ontology had a match for ‘soil pH’ (http://purl.dataone.org/odo/ECSO_00001646) did not specify an extraction method. Interlinking Ontology for Biological Concepts had a match for ‘soil acidity’ (http://purl.jp/bio/4/id/200906080708260606), also without an extraction method specified.
+
+The search term *‘soil depth’* returned 33 ontology matches (search date: 19 May 2020). Only two of these hits specifically referred to depth of soil. The Ecosystem Ontology had a match for ‘Soil Depth’ (http://purl.dataone.org/odo/ECSO_00001207), specifically mentioning soil depth in the context of layers. Interlinking Ontology for Biological Concepts had a match for ‘soil depth’ (http://purl.jp/bio/4/id/201006028017141570), which seemed to refer more to the total depth of the soil. 
+
+## Next steps
+
+All groups in this study have been contacted and confirmed interest in particpating.
+We are currently expanding the data products being considered to include the Soil Incubation Database, WoSIS, ISCN-2016-template, the LTER soil organic matter working group, and the Soil Heath Database.
+We have draft the intial questions for the long format interviews below and plan to start conducting interviews in June.
+By the end of July we expect to have a more general community survey targeted more broadly to the soil science community.
+We will continue to explore the developed ontologies.
+
+### Interview questions
+
+  1) Why did you start this study?
+  2) Describe your workflow for ingesting data sets?
+  3) What decisions did you make to arrive at this workflow?
+  4) How would someone get a copy of the data in this study?
+  5) What would you do differently if you had to start again? What would be the same?
+
