@@ -31,7 +31,7 @@ General FAIR data principles were recognized as important, though not named as s
 In general there were no differences in the harmonizatin pipeline process between the providers and aggregators.
 
 Unsurprisingly open public data was well supported by the respondences with interest in broaderening scienific impact and increased visibility.
-Attribution and engagement was a named concern of respondences, in particular collonial science was called out as being partiucalrlly problematic.
+Attribution and engagement was a named concern of respondences, in particular collonial science was called out as being particularly problematic.
 Time investments with unclear rewards.
 Unclear what "data base" was appropreate for a given data set.
 Data permissions issues.
