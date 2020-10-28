@@ -19,7 +19,7 @@ These are notes from the June 2020 interview with Dr Natasja van Gestel.
 2) Describe your workflow for ingesting data sets?
     - Data is extracted from the published literature, generally though transcription of points recovered from figures or published tables.
     - Studies are selected based on availability of soil carbon, and an attempt is made to capture all the data associated with these studies.
-    - This data is then entered into an Excel spreadsheet, fed through a series of scripts to automate gap-filling, and then generate data products relevant to modeling studies.
+    - This data is then entered into an Excel spreadsheet, fed through a series of scripts to automate gap-filling, and then generated into data products relevant to modeling studies.
     - van Gestel and her lab were responsible for everything from the initial design of the spreadsheets, to data recovery and post-processing. 
     - There are currently over 100 studies in the database.
 3) What decisions did you make to arrive at this workflow?
@@ -34,7 +34,7 @@ These are notes from the June 2020 interview with Dr Natasja van Gestel.
 4) How would someone get a copy of the data in this study?
     - Contact van Gestel directly, publication is pending.
 5) What would you do differently if you had to start again? What would be the same?
-    - Happy with the outcome of the meta analysis and would not change much.  Current template and data product pipeline has proven effective. 
+    - Happy with the outcome of the meta analysis and would not change much. Current template and data product pipeline has proven effective. 
     - Currently using PowerPoint to extract data from figures, so using a different type of software could make the process more efficient.  
     - Considering focusing more on collecting data from repositories in the future.
 
