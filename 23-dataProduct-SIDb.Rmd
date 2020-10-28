@@ -10,7 +10,7 @@ tableDescription <- dataDescription.ls$structure %>%
 These are notes from a 4 June 2020 interview with Carlos Sierra and Christina Scheadel.
 
 1) Why did you start this study?
-    - There is this huge potential to use new innovations with soil incubation data, but people were using it in many different ways, making it hard to demonstrate it's value. Time series incubations are an important aspect of soil incubation that have been under utilized, in contrast to total respired fraction. In particular time series incubation data can tell you about the carbon stock rate and the dynamics. The fact that the environment in these incubations is so tightly controlled is a feature, not a bug, removing confounding variables (in other words, sensitivity functions) from the results. 
+    - There is this huge potential to use new innovations with soil incubation data, but people were using it in many different ways, making it hard to demonstrate it's value. Time series incubations are an important aspect of soil incubation that have been under utilized, in contrast to total respired fraction. In particular time series incubation data can tell you about the carbon stock rate and dynamics. The fact that the environment in these incubations is so tightly controlled is a feature, not a bug, removing confounding variables (in other words, sensitivity functions) from the results. 
     - This database is a merger of two projects by Carlos and Christina. These two projects were started roughly 5 years ago; once they both became aware of the other's projects, they merged efforts. A week-long workshop in Jena, Germany during March of 2019 accelerated work.
 2) Describe your workflow for ingesting data sets.
     - There are three main elements of a data contribution: the time series, initial conditions, and metadata.
@@ -19,7 +19,7 @@ These are notes from a 4 June 2020 interview with Carlos Sierra and Christina Sc
     - Data was generally not directly contributed from PI unless the PI was directly involved in the data product.
     - SIDb is NOT a repository and instead a dynamic data product. Data should ideally be archived in a repository separately.
 Follow up question: How successful were you in getting PIs to give you data?
-    - Within the group, there were people with data, so they got data from them instead of contacting PIs for them. Did not ask for data from PIs. the dataset is not complete at all. They were setting up the infrastructure for people to upload their own data. No outside contributions yet. Some people have expressed interest. 
+    - Within the group, there were people with data, so they got data from them instead of contacting PIs for them. Did not ask for data from PIs. The dataset is not complete at all. They were setting up the infrastructure for people to upload their own data. No outside contributions yet. Some people have expressed interest. 
     - Dynamic database, not a repository. Contribution to a product. You are expected to archive your own data.
     - Current data product
         + There are 31 studies so far.
