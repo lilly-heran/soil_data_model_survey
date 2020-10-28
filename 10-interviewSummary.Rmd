@@ -13,7 +13,7 @@ This synthesis process was long; most of the data products developed over a peri
 All workflows aggregated data somehow and then put it through an automated quality control and assurance process.
 In general data was prioritized for synthesis based on its size (more data was higher priority) and relevancy to the question of the project.
 
-Much of the diversity in these workflow came from the aggregation process and the degree to which manual data transcription was utilized.
+Much of the diversity in these workflows came from the aggregation process and the degree to which manual data transcription was utilized.
 The most common approach entailed manual data transcription from the original format (data table or information embedded in a figure) to a study specific data template. 
 This data transcription was done in some cases primarily by the data provider (ISCN, ISRaD, WoSIS, CC-RCN, and Crowther), or by the data synthesis team themselves (ISRaD, van Gestel, and SIDb). 
 SoDaH had a unique key approach where a data thesaurus was developed by the data provider to translate the original data model into the common project model.
