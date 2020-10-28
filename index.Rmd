@@ -27,7 +27,7 @@ biblio-style: apalike
 The overall goal of the project is to develop, implement, and test best practices for compiling transparent, reproducible, harmonized, and extendable data collections for meta-analysis. 
 In this document there is 
 1) an examination of current meta-analysis efforts in the soil community though short reviews developed in collaboration with the research group, 
-2) a general interview to the soils community, and 
+2) a general interview of the soils community, and 
 3) a structural summary of the data models available.
 
 The results from this project have spawned an upcoming manuscript and future ESIP Cluster [links pending].
